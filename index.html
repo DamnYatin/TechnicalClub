@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPort</title>
+    <link rel="icon" href="https://www.flaticon.com/download/icon/18294074?icon_id=18294074&author=4345&team=4345&keyword=Small+business&pack=18293544&style=1&style_id=1373&format=png&color=%23000000&colored=2&size=512&selection=1&type=standard">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #FFFFFF;
+            --surface-color: #FFFFFF;
+            --primary-color: #5A31F4;
+            --primary-color-light: #A78BFA;
+            --text-color: #374151; /* Tailwind gray-700 */
+            --text-color-secondary: #6b7280; /* Tailwind gray-500 */
+            --border-color: #e5e7eb; /* Tailwind gray-200 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        /* Simple animation for page transitions */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .active {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        /* Gradient button style */
+        .btn-grad {
+            background-image: linear-gradient(to right, var(--primary-color-light) 0%, var(--primary-color) 51%, var(--primary-color-light) 100%);
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px #eee;
+        }
+        .btn-grad:hover {
+            background-position: right center; /* change the direction of the change here */
+        }
+    </style>
+</head>
+<body class="">
+
+    <!-- Header -->
+    <header class="bg-surface shadow-lg sticky top-0 z-50" style="background-color: var(--surface-color);">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3" onclick="showPage('home')">
+                <img src="https://iili.io/KXRV5CJ.png" alt="PixelPort Logo" class="h-10 w-10 rounded-full object-cover">
+                <span class="text-3xl font-bold" style="color: var(--primary-color);">PixelPort</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class=" transition duration-300" style="color: var(--text-color-secondary);" onmouseover="this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--text-color-secondary)';" onclick="showPage('home')">Home</a>
+                <a href="#" class=" transition duration-300" style="color: var(--text-color-secondary);" onmouseover="this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--text-color-secondary)';" onclick="showPage('products')">Products</a>
+                <a href="#" id="auth-link" class=" transition duration-300" style="color: var(--text-color-secondary);" onmouseover="this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--text-color-secondary)';" onclick="showPage('login')">Login</a>
+                <a href="#" id="logout-link" class=" transition duration-300 hidden" style="color: var(--text-color-secondary);" onmouseover="this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--text-color-secondary)';" onclick="logout()">Logout</a>
+            </div>
+            <div class="flex items-center">
+                <a href="#" class="relative transition duration-300" style="color: var(--text-color-secondary);" onmouseover="this.style.color='var(--primary-color)';" onmouseout="this.style.color='var(--text-color-secondary)';" onclick="showPage('cart')">
+                    <i class="fa fa-shopping-cart fa-lg"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-3 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="background-color: var(--primary-color);">0</span>
+                </a>
+                <button id="mobile-menu-button" class="md:hidden ml-4 focus:outline-none" style="color: var(--text-color);">
+                    <i class="fa fa-bars fa-lg"></i>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t" style="background-color: var(--surface-color); border-color: var(--border-color);">
+            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100" style="color: var(--text-color);" onclick="showPage('home'); toggleMobileMenu();">Home</a>
+            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100" style="color: var(--text-color);" onclick="showPage('products'); toggleMobileMenu();">Products</a>
+            <a href="#" id="mobile-auth-link" class="block px-4 py-2 text-sm hover:bg-gray-100" style="color: var(--text-color);" onclick="showPage('login'); toggleMobileMenu();">Login</a>
+             <a href="#" id="mobile-logout-link" class="block px-4 py-2 text-sm hover:bg-gray-100 hidden" style="color: var(--text-color);" onclick="logout(); toggleMobileMenu();">Logout</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <!-- Hero Section -->
+            <div class="rounded-lg shadow-2xl overflow-hidden">
+                <div class="p-8 md:p-12 text-center bg-cover bg-center h-[60vh] flex items-center justify-center" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop')">
+                    <div class="bg-black bg-opacity-50 p-8 rounded-lg">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Your Portal to Pixel Perfection</h1>
+                        <p class="text-lg text-gray-200 mb-6">Discover the latest in tech gadgets and accessories.</p>
+                        <button class="btn-grad font-bold py-3 px-8 rounded-full transition transform hover:scale-105" onclick="showPage('products')">Shop Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Choose Us Section -->
+            <section class="mt-16">
+                <h2 class="text-3xl font-bold text-center mb-8">Why Choose PixelPort?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6 rounded-lg">
+                        <i class="fas fa-shipping-fast text-4xl mb-4" style="color: var(--primary-color);"></i>
+                        <h3 class="text-xl font-semibold mb-2">Fast Shipping</h3>
+                        <p style="color: var(--text-color-secondary);">Get your favorite gadgets delivered to your doorstep in no time.</p>
+                    </div>
+                    <div class="p-6 rounded-lg">
+                        <i class="fas fa-shield-alt text-4xl mb-4" style="color: var(--primary-color);"></i>
+                        <h3 class="text-xl font-semibold mb-2">Secure Payments</h3>
+                        <p style="color: var(--text-color-secondary);">Shop with confidence using our secure and encrypted payment gateway.</p>
+                    </div>
+                    <div class="p-6 rounded-lg">
+                        <i class="fas fa-headset text-4xl mb-4" style="color: var(--primary-color);"></i>
+                        <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+                        <p style="color: var(--text-color-secondary);">Our dedicated support team is here to help you around the clock.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Products Section -->
+            <section class="mt-16">
+                <h2 class="text-3xl font-bold text-center mb-8">Featured Products</h2>
+                <div id="featured-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Featured products will be injected here by JS -->
+                </div>
+                 <div class="text-center mt-8">
+                    <button class="btn-grad font-bold py-3 px-8 rounded-full transition transform hover:scale-105" onclick="showPage('products')">View All Products</button>
+                </div>
+            </section>
+        </section>
+
+        <!-- Products Page -->
+        <section id="products" class="page">
+            <h2 class="text-3xl font-bold mb-4 text-center">Our Products</h2>
+            <div id="category-filters" class="flex justify-center gap-2 mb-8 flex-wrap">
+                <!-- Filter buttons will be injected here by JS -->
+            </div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product cards will be injected here by JS -->
+            </div>
+        </section>
+
+        <!-- Product Details Page -->
+        <section id="product-detail" class="page">
+            <button class="mb-6 hover:underline flex items-center gap-2" style="color: var(--primary-color);" onclick="showPage('products')"><i class="fas fa-arrow-left"></i>Back to Products</button>
+            <div id="product-detail-content" class="p-8 rounded-lg shadow-xl" style="background-color: var(--surface-color);">
+                <!-- Product details will be injected here -->
+            </div>
+        </section>
+
+        <!-- Cart Page -->
+        <section id="cart" class="page">
+            <h2 class="text-3xl font-bold mb-6">Your Shopping Cart</h2>
+            <div id="cart-items" class="p-6 rounded-lg shadow-xl" style="background-color: var(--surface-color);">
+                <!-- Cart items will be injected here -->
+            </div>
+            <div id="cart-summary" class="mt-6 p-6 rounded-lg shadow-xl" style="background-color: var(--surface-color);">
+                 <!-- Cart summary will be injected here -->
+            </div>
+        </section>
+        
+        <!-- Login Page -->
+        <section id="login" class="page">
+            <div class="max-w-md mx-auto p-8 rounded-lg shadow-xl" style="background-color: var(--surface-color);">
+                <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+                <form id="login-form">
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2">Email</label>
+                        <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--border-color); --tw-ring-color: var(--primary-color-light);" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block mb-2">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--border-color); --tw-ring-color: var(--primary-color-light);" required>
+                    </div>
+                    <button type="submit" class="w-full btn-grad font-bold py-3 px-4 rounded-lg">Login</button>
+                </form>
+                 <p class="text-center mt-4 text-sm" style="color: var(--text-color-secondary);">
+                    Don't have an account? <a href="#" class="hover:underline" style="color: var(--primary-color);">Sign Up</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Checkout Page -->
+        <section id="checkout" class="page">
+            <div class="max-w-2xl mx-auto p-8 rounded-lg shadow-xl" style="background-color: var(--surface-color);">
+                <h2 class="text-2xl font-bold mb-6">Checkout</h2>
+                <form id="checkout-form">
+                    <h3 class="text-lg font-semibold mb-4">Shipping Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="name" class="block mb-2">Full Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--border-color);" required>
+                        </div>
+                        <div>
+                            <label for="address" class="block mb-2">Address</label>
+                            <input type="text" id="address" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--border-color);" required>
+                        </div>
+                    </div>
+                     <h3 class="text-lg font-semibold my-4">Payment Details</h3>
+                    <div>
+                        <label for="card" class="block mb-2">Card Number</label>
+                        <input type="text" id="card" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--border-color);" placeholder="1234 5678 9101 1121" required>
+                    </div>
+                    <button type="submit" class="mt-6 w-full btn-grad font-bold py-3 px-4 rounded-lg">Place Order</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Order Confirmation Page -->
+        <section id="confirmation" class="page">
+            <div class="max-w-lg mx-auto p-8 rounded-lg shadow-xl text-center" style="background-color: var(--surface-color);">
+                <i class="fa fa-check-circle text-6xl mb-4" style="color: var(--primary-color);"></i>
+                <h2 class="text-2xl font-bold mb-4">Order Confirmed!</h2>
+                <p class="mb-6" style="color: var(--text-color-secondary);">Thank you for your purchase. A confirmation email has been sent.</p>
+                <button class="btn-grad font-bold py-2 px-6 rounded-lg" onclick="showPage('home')">Continue Shopping</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-12" style="background-color: var(--surface-color); border-color: var(--border-color);">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center" style="color: var(--text-color-secondary);">
+            <p>&copy; 2025 PixelPort. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // --- DATA ---
+        const products = [
+            { id: 1, name: "Wireless Headphones", category: "Audio", price: 99.99, image: "https://m.media-amazon.com/images/I/61UgZSYRllL._UF1000,1000_QL80_.jpg?q=80&w=800&auto=format&fit=crop", description: "High-fidelity wireless headphones with noise-cancellation and a 20-hour battery life." },
+            { id: 2, name: "Smartwatch", category: "Gadgets", price: 199.99, image: "https://m.media-amazon.com/images/I/71Ll7RaekYL._UF1000,1000_QL80_.jpg?q=80&w=800&auto=format&fit=crop", description: "Stay connected with this sleek smartwatch. Track your fitness, receive notifications, and more." },
+            { id: 3, name: "Portable Speaker", category: "Audio", price: 49.99, image: "https://avshack.in/cdn/shop/files/middleton-black-brass-01.jpg?v=1703499374&width=1214?q=80&w=800&auto=format&fit=crop", description: "A compact yet powerful Bluetooth speaker. Waterproof and durable for any adventure." },
+            { id: 4, name: "Ergonomic Mouse", category: "Office", price: 59.99, image: "https://play3r.net/wp-content/uploads/2016/05/ASUS-ROG-Spatha-Review-Lighting-4.jpg?q=80&w=800&auto=format&fit=crop", description: "Designed for comfort and precision, this ergonomic mouse reduces strain during long hours of use." },
+            { id: 5, name: "Mechanical Keyboard", category: "Office", price: 129.99, image: "https://m.media-amazon.com/images/I/51n5v-qpjGL._UF1000,1000_QL80_.jpg?q=80&w=800&auto=format&fit=crop", description: "Experience satisfying tactile feedback with this mechanical keyboard, featuring customizable RGB lighting." },
+            { id: 6, name: "4K Webcam", category: "Gadgets", price: 89.99, image: "https://m.media-amazon.com/images/I/71SAamTGWQL.jpg?q=80&w=800&auto=format&fit=crop", description: "Crystal-clear video quality for your video calls and streaming. Features autofocus and low-light correction." },
+            { id: 7, name: "Laptop Stand", category: "Office", price: 39.99, image: "https://m.media-amazon.com/images/I/61AS07l2cBL._UF1000,1000_QL80_.jpg?q=80&w=800&auto=format&fit=crop", description: "Improve your posture and workspace with this adjustable aluminum laptop stand." },
+            { id: 8, name: "USB-C Hub", category: "Accessories", price: 59.99, image: "https://mm.digikey.com/Volume0/opasdata/d220001/medias/images/5881/MFG_5G4AB-USB-C-HUB.jpg?q=80&w=800&auto=format&fit=crop", description: "Expand your device's connectivity with this versatile USB-C hub with multiple ports." },
+            { id: 9, name: "VR Headset", category: "Gadgets", price: 299.99, image: "https://nexteldigiplanetuae.com/wp-content/uploads/2024/02/1.jpg?q=80&w=800&auto=format&fit=crop", description: "Immerse yourself in virtual worlds with this high-resolution VR headset." },
+            { id: 10, name: "Wireless Earbuds", category: "Audio", price: 79.99, image: "https://m.media-amazon.com/images/I/71ke2BEdIhL.jpg?q=80&w=800&auto=format&fit=crop", description: "Compact and convenient wireless earbuds with a portable charging case." },
+            { id: 11, name: "Power Bank", category: "Accessories", price: 29.99, image: "https://d57avc95tvxyg.cloudfront.net/images/detailed/853/10000mah-power-bank-portable-charger-for-karbonn-k39-maxbhi-9-3-1.jpg?q=80&w=800&auto=format&fit=crop", description: "Charge your devices on the go with this high-capacity power bank." },
+            { id: 12, name: "Ultrawide Monitor", category: "Office", price: 349.99, image: "https://images-cdn.ubuy.co.in/67c9c1d5cdaf69080d780b1a-samsung-49-odyssey-g9-dqhd-240hz.jpg?q=80&w=800&auto=format&fit=crop", description: "Boost your productivity with this stunning 34-inch ultrawide monitor." }
+        ];
+
+        let cart = [];
+        let isLoggedIn = false;
+
+        // --- PAGE NAVIGATION ---
+        const pages = document.querySelectorAll('.page');
+        function showPage(pageId) {
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // --- PRODUCT RENDERING ---
+        function renderFeaturedProducts() {
+            const featuredGrid = document.getElementById('featured-product-grid');
+            if (!featuredGrid) return;
+            featuredGrid.innerHTML = '';
+            const featured = products.slice(0, 4); // Get first 4 products
+
+            featured.forEach(product => {
+                featuredGrid.innerHTML += `
+                    <div class="rounded-lg shadow-lg overflow-hidden transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group" style="background-color: var(--surface-color);" onclick="showProductDetail(${product.id})">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/334155?text=Image+Error';">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">${product.name}</h3>
+                            <p class="font-semibold mt-2" style="color: var(--primary-color);">$${product.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderProducts(category = 'all') {
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = '';
+
+            const filteredProducts = category === 'all'
+                ? products
+                : products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+
+            filteredProducts.forEach(product => {
+                productGrid.innerHTML += `
+                    <div class="rounded-lg shadow-lg overflow-hidden transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group" style="background-color: var(--surface-color);" onclick="showProductDetail(${product.id})">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/334155?text=Image+Error';">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">${product.name}</h3>
+                            <p class="font-semibold mt-2" style="color: var(--primary-color);">$${product.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function renderCategoryFilters() {
+            const filtersContainer = document.getElementById('category-filters');
+            const categories = ['All', ...new Set(products.map(p => p.category))]; 
+
+            filtersContainer.innerHTML = categories.map(category => `
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-semibold border transition" style="border-color: var(--border-color); color: var(--text-color-secondary);" data-category="${category.toLowerCase()}">
+                    ${category}
+                </button>
+            `).join('');
+
+            const filterButtons = document.querySelectorAll('.category-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => {
+                        btn.style.backgroundColor = 'transparent';
+                        btn.style.color = 'var(--text-color-secondary)';
+                    });
+                    button.style.backgroundColor = 'var(--primary-color)';
+                    button.style.color = 'white';
+                    const selectedCategory = button.getAttribute('data-category');
+                    renderProducts(selectedCategory);
+                });
+            });
+            
+            const allButton = filtersContainer.querySelector('.category-btn[data-category="all"]');
+            allButton.style.backgroundColor = 'var(--primary-color)';
+            allButton.style.color = 'white';
+        }
+
+
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const detailContent = document.getElementById('product-detail-content');
+            detailContent.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-8">
+                    <img src="${product.image}" alt="${product.name}" class="w-full md:w-1/2 rounded-lg object-cover shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/334155?text=Image+Error';">
+                    <div>
+                        <h2 class="text-3xl font-bold">${product.name}</h2>
+                        <p class="text-2xl my-4" style="color: var(--primary-color);">$${product.price.toFixed(2)}</p>
+                        <p class="mb-6" style="color: var(--text-color-secondary);">${product.description}</p>
+                        <button class="btn-grad font-bold py-2 px-6 rounded-lg" onclick="addToCart(${product.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+            showPage('product-detail');
+        }
+
+        // --- CART LOGIC ---
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const cartItem = cart.find(item => item.id === productId);
+
+            if (cartItem) {
+                cartItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCart();
+            showPage('cart');
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        function updateQuantity(productId, quantity) {
+            const cartItem = cart.find(item => item.id === productId);
+            if (cartItem) {
+                cartItem.quantity = parseInt(quantity);
+                if (cartItem.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartSummaryContainer = document.getElementById('cart-summary');
+            const cartCount = document.getElementById('cart-count');
+
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<div class="text-center py-12"><i class="fas fa-shopping-cart text-4xl mb-4" style="color: var(--border-color);"></i><p class="text-center" style="color: var(--text-color-secondary);">Your cart is empty.</p></div>`;
+                cartSummaryContainer.innerHTML = '';
+                return;
+            }
+
+            let itemsHtml = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                itemsHtml += `
+                    <div class="flex items-center justify-between border-b py-4 last:border-b-0" style="border-color: var(--border-color);">
+                        <div class="flex items-center gap-4">
+                            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-md object-cover" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e2e8f0/334155?text=Error';">
+                            <div>
+                                <h4 class="font-semibold">${item.name}</h4>
+                                <p class="text-sm" style="color: var(--text-color-secondary);">$${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                           <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)" class="w-16 text-center border rounded-md" style="border-color: var(--border-color);">
+                           <p class="font-semibold w-20 text-right">$${itemTotal.toFixed(2)}</p>
+                           <button class="text-red-500 hover:text-red-700 transition" onclick="removeFromCart(${item.id})"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            cartItemsContainer.innerHTML = itemsHtml;
+
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            cartSummaryContainer.innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between"><span style="color: var(--text-color-secondary);">Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+                    <div class="flex justify-between"><span style="color: var(--text-color-secondary);">Tax (10%)</span><span>$${tax.toFixed(2)}</span></div>
+                    <div class="flex justify-between font-bold text-lg border-t pt-2 mt-2" style="border-color: var(--border-color);"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+                </div>
+                <button class="mt-6 w-full btn-grad font-bold py-3 px-4 rounded-lg" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            `;
+        }
+
+        // --- AUTH & CHECKOUT ---
+        function proceedToCheckout() {
+            if (!isLoggedIn) {
+                // Using a more elegant modal/toast in a real app would be better than alert.
+                alert("Please log in to proceed to checkout.");
+                showPage('login');
+                return;
+            }
+            if (cart.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+            showPage('checkout');
+        }
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            isLoggedIn = true;
+            updateAuthUI();
+            showPage('home');
+        });
+
+        function logout() {
+            isLoggedIn = false;
+            updateAuthUI();
+            showPage('home');
+        }
+
+        function updateAuthUI() {
+             const authLinks = [document.getElementById('auth-link'), document.getElementById('mobile-auth-link')];
+             const logoutLinks = [document.getElementById('logout-link'), document.getElementById('mobile-logout-link')];
+
+             if(isLoggedIn) {
+                 authLinks.forEach(link => link.classList.add('hidden'));
+                 logoutLinks.forEach(link => link.classList.remove('hidden'));
+             } else {
+                 authLinks.forEach(link => link.classList.remove('hidden'));
+                 logoutLinks.forEach(link => link.classList.add('hidden'));
+             }
+        }
+        
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            cart = []; // Clear cart
+            updateCart();
+            showPage('confirmation');
+        });
+        
+        // --- MOBILE MENU ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFeaturedProducts();
+            renderCategoryFilters();
+            renderProducts();
+            updateCart();
+            updateAuthUI();
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
+
+
